@@ -6,7 +6,7 @@
 /*   By: aprevrha <aprevrha@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/09 18:18:28 by aprevrha          #+#    #+#             */
-/*   Updated: 2023/11/07 15:43:03 by aprevrha         ###   ########.fr       */
+/*   Updated: 2023/12/09 19:58:57 by aprevrha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	handle_sigusr(int signum, siginfo_t *info, void *context)
 	static int				bit = 8;
 	static unsigned char	byte = 0;
 
+	(void)context;
 	if (info->si_pid != client_pid && client_pid != -1)
 		return ;
 	else if (client_pid == -1)
@@ -38,7 +39,6 @@ void	handle_sigusr(int signum, siginfo_t *info, void *context)
 		kill(client_pid, SIGUSR1);
 		return ;
 	}
-	(void)context;
 	byte = byte << 1;
 	if (signum == SIGUSR2)
 		byte = byte | 0x1;

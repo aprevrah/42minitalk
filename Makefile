@@ -5,15 +5,15 @@ RM = rm -f
 SOURCES = server.c client.c
 OBJECTS = $(SOURCES:.c=.o)
 
-S_NAME = server
+NAME = server
 C_NAME = client
 
-all: libft $(S_NAME) $(C_NAME)
+all: libft $(NAME) $(C_NAME)
 	
 libft:
 	make -C ./libft all
 
-$(S_NAME): server.o libft/libft.a
+$(NAME): server.o libft/libft.a
 	$(CC) $(CFLAGS) -o $@ $< -L./libft -lft
 $(C_NAME): client.o libft/libft.a
 	$(CC) $(CFLAGS) -o $@ $< -L./libft -lft
@@ -27,7 +27,7 @@ clean:
 
 fclean: clean
 	make -C ./libft fclean
-	$(RM) $(S_NAME) $(C_NAME)
+	$(RM) $(NAME) $(C_NAME)
 
 re: fclean all
 

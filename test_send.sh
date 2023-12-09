@@ -11,7 +11,7 @@ server_pid=$!
 echo "Server PID: $server_pid"
 
 # Define the second argument for the clients
-second_arg="TSERefwefwef weewfwef ewfgerg ergerger ergherhghrgu erjgnrneug ergerugerhgherg erg"
+second_arg="TEST awfkw regj kergkore erkgrwejhgueh rejgrhej regkjreg jkregjer kjgjreg krejgkre erjgkerj regkerj ergker jergk erj"
 
 # Run the first client program with the captured PID and the second argument
 (./client "$server_pid" "$second_arg" 2>&1) | while IFS= read -r line; do
@@ -19,6 +19,7 @@ second_arg="TSERefwefwef weewfwef ewfgerg ergerger ergherhghrgu erjgnrneug erger
 Client 1: $line"
 done &
 
+#: <<'END'
 # Run the second client program with the captured PID and the second argument
 (./client "$server_pid" "$second_arg" 2>&1) | while IFS= read -r line; do
     echo "
@@ -37,5 +38,6 @@ done &
 Client 4: $line"
 done &
 
+#END
 # Wait for all programs to finish
 wait

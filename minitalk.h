@@ -6,7 +6,7 @@
 /*   By: aprevrha <aprevrha@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/08 13:01:15 by aprevrha          #+#    #+#             */
-/*   Updated: 2023/11/07 16:08:34 by aprevrha         ###   ########.fr       */
+/*   Updated: 2023/12/09 21:13:13 by aprevrha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,13 @@
 # include <unistd.h>
 # include <time.h>
 
-# define CLIENT_TIMEOUT 100
-//0 fast, 100 balanced, 200 stable
-# define CLIENT_USLEEP 0
+# define CLIENT_TIMEOUT 10
+
+typedef struct s_info
+{
+	int		pid;
+	char	*msg;
+	int		response;
+}	t_info;
 
 #endif

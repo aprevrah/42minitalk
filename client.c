@@ -6,26 +6,13 @@
 /*   By: aprevrha <aprevrha@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/07 13:20:03 by aprevrha          #+#    #+#             */
-/*   Updated: 2023/11/07 16:23:24 by aprevrha         ###   ########.fr       */
+/*   Updated: 2023/12/09 21:08:31 by aprevrha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-volatile sig_atomic_t	g_paused;
-
-void	handle_sigusr(int signum, awd)
-{
-	if (CLIENT_USLEEP)
-		usleep(CLIENT_USLEEP);
-	if (signum == SIGUSR1)
-		g_paused = 0;
-	else if (signum == SIGUSR2)
-	{
-		write(1, "\033[32mMessage was recived!\033[0m\n", 30);
-		exit(0);
-	}
-}
+t_info	g_info;
 
 int	send_bit(int bit, unsigned int pid)
 {
@@ -36,45 +23,41 @@ int	send_bit(int bit, unsigned int pid)
 	return (-1);
 }
 
-void	send_byte(char byte, unsigned int pid)
+void	handle_sigusr(int signum)
 {
-	int	bit;
+	static int			bit = 7;
+	static unsigned int	byte = 0;
 
-	bit = 7;
-	while (bit >= 0)
+	g_info.response = 1;
+	if (signum == SIGUSR2)
 	{
-		g_paused = 1;
-		send_bit((byte >> bit) & 0x1, pid);
-		while (g_paused)
-			pause();
-		bit--;
+		write(1, "\033[32mMessage was recived!\033[0m\n", 30);
+		exit(0);
+	}
+	send_bit((g_info.msg[byte] >> bit) & 0x1, g_info.pid);
+	bit--;
+	if (bit < 0)
+	{
+		bit = 7;
+		byte++;
 	}
 }
 
-int	send_msg(char *msg, __pid_t server_pid)
+int	connect(void)
 {
-	int	i;
+	int	s;
 
-	i = 0;
-	g_paused = 1;
-	while (g_paused)
+	s = 0;
+	while (g_info.response == 0)
 	{
-		if (server_pid == 0 || send_bit(0x0, server_pid) == -1)
+		if (g_info.pid == 0 || send_bit(0x0, g_info.pid) == -1)
 			return (
 				ft_printf("\033[41mError:\033[0m Can't reach server.\n"), 1);
-		if (i > 0)
-			sleep(1);
-		if (i > CLIENT_TIMEOUT)
+		if (s >= CLIENT_TIMEOUT)
 			return (ft_printf("\033[41mError:\033[0m Timeout.\n"), 1);
-		i++;
+		sleep(1);
+		s++;
 	}
-	i = 0;
-	while (msg[i])
-	{
-		send_byte(msg[i], server_pid);
-		i++;
-	}
-	send_byte(0x0, server_pid);
 	return (0);
 }
 
@@ -91,5 +74,12 @@ int	main(int argc, char **argv)
 		ft_printf("%s: usage: %s <server_pid> <message>\n", argv[0], argv[0]);
 		return (1);
 	}
-	return (send_msg(argv[2], ft_atoi(argv[1])));
+	g_info.msg = argv[2];
+	g_info.pid = ft_atoi(argv[1]);
+	g_info.response = 0;
+	if (connect() == 1)
+		return (1);
+	while (1)
+		pause();
+	return (0);
 }

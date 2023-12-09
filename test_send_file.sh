@@ -11,7 +11,7 @@ server_pid=$!
 echo "Server PID: $server_pid"
 
 # Define the second argument for the clients
-second_arg=$(cat ../Lorem_Ipsum.txt)
+second_arg=$(cat ./Lorem_Ipsum.txt)
 
 # Run the first client program with the captured PID and the second argument
 (./client "$server_pid" "$second_arg" 2>&1) | while IFS= read -r line; do
@@ -24,7 +24,7 @@ done &
     echo "
 Client 2: $line"
 done &
-
+: <<'END'
 # Run the second client program with the captured PID and the second argument
 (./client "$server_pid" "$second_arg" 2>&1) | while IFS= read -r line; do
     echo "
